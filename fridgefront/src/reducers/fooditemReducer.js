@@ -18,6 +18,7 @@ const reducer = (state = [], action) => {
 export const createFooditem = (newItem) => {
 	return async (dispatch) => {
 		const response = await fooditemService.create(newItem)
+		console.log(response)
 		dispatch({
 			type: 'NEW_ITEM',
 			data: response

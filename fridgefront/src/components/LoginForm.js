@@ -4,6 +4,7 @@ import { Segment, Form } from 'semantic-ui-react'
 const LoginForm = ({ onSubmit }) => {
 	return (
 		<Segment>
+			<h3>Log in</h3>
 			<Form className='ui form' onSubmit={onSubmit} >
 				<Form.Input label='Username' type='text' name='username' />
 				<Form.Input label='Password' type='password' name='password' />
