@@ -1,11 +1,12 @@
 import React from 'react'
 import { Segment, Table, Button } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
+import FooditemEditForm from './FooditemEditForm'
 
 const FooditemList = ({ fooditems, remove }) => {
 	return (
 		<Segment>
-			<Table striped>
+			<Table striped selectable>
 				<Table.Header>
 					<Table.Row>
 						<Table.HeaderCell>Name</Table.HeaderCell>
@@ -23,7 +24,11 @@ const FooditemList = ({ fooditems, remove }) => {
 							<Table.Cell>{item.weight}</Table.Cell>
 							<Table.Cell>{item.volume}</Table.Cell>
 							<Table.Cell>{item.pieces}</Table.Cell>
-							<Table.Cell><Button color='blue'><Link to={`/fooditems/update/${item.id}`}>Update</Link></Button></Table.Cell>
+							<Table.Cell>
+								<Button className='tiny' color='green'>
+									<Link to={`/fooditems/update/${item.id}`}>Update</Link>
+								</Button>
+							</Table.Cell>
 							<Table.Cell><Button color='red' onClick={remove(item)}>Delete</Button></Table.Cell>
 						</Table.Row>
 					))}

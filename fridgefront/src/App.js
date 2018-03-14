@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { initialiseFooditems, createFooditem, deleteFooditem } from './reducers/fooditemReducer'
+import { initialiseFooditems, createFooditem, deleteFooditem, updateFooditem } from './reducers/fooditemReducer'
 import { setLoggedInUser, logIn, logOut } from './reducers/currentUserReducer'
 import { notify } from './reducers/notificationReducer'
 import LoginForm from './components/LoginForm'
@@ -12,6 +12,7 @@ import FooditemList from './components/FooditemList'
 import CreateFooditem from './components/CreateFooditem'
 import SignUpForm from './components/SignUpForm'
 import userService from './services/users'
+import FooditemEditForm from './components/FooditemEditForm';
 
 class App extends Component {
 
@@ -114,6 +115,34 @@ class App extends Component {
 		}
 	}
 
+	updateFooditem = (toUpdate) => async (event) => {
+		event.preventDefault()
+		const target = event.target
+		const newItem = {
+			...toUpdate,
+			weight: target.weight.value,
+			volume: target.volume.value,
+			pieces: target.pieces.value
+		}
+
+		try {
+			await this.props.updateFooditem(newItem)
+
+			target.weight.value = ''
+			target.volume.value = ''
+			target.pieces.value = ''
+
+			this.props.notify(`Food item ${toUpdate.name} updated!`, 'success')
+		} catch (exception) {
+			this.props.notify(`Updating ${toUpdate.name} not allowed`, 'error')
+		}
+		
+	}
+
+	getFooditemByID = (id) => {
+		return this.props.fooditems.find(f => f.id === id)
+	}
+
 	render() {
 		return (
 			<Container>
@@ -138,6 +167,12 @@ class App extends Component {
 								: <Redirect to='/login' />
 						} />
 						<Route path='/signup' render={() => <SignUpForm onSubmit={this.signup} />} />
+						<Route path='/fooditems/update/:id' render={({ match, history }) => {
+							const fooditem = this.getFooditemByID(match.params.id)
+							return this.props.user
+								? <FooditemEditForm fooditem={fooditem} history={history} updateItem={this.updateFooditem(fooditem)} />
+								: <Redirect to='/login' />
+						} } />
 					</div>
 				</Router>
 			</Container>
@@ -154,5 +189,5 @@ const mapStateToProps = (state) => {
 
 export default connect(
 	mapStateToProps,
-	{ initialiseFooditems, setLoggedInUser, logIn, notify, logOut, createFooditem, deleteFooditem }
+	{ initialiseFooditems, setLoggedInUser, logIn, notify, logOut, createFooditem, deleteFooditem, updateFooditem }
 )(App)
