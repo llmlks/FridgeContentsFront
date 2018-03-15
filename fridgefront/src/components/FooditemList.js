@@ -1,7 +1,6 @@
 import React from 'react'
 import { Segment, Table, Button } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
-import FooditemEditForm from './FooditemEditForm'
 
 const FooditemList = ({ fooditems, remove }) => {
 	return (
@@ -10,9 +9,10 @@ const FooditemList = ({ fooditems, remove }) => {
 				<Table.Header>
 					<Table.Row>
 						<Table.HeaderCell>Name</Table.HeaderCell>
-						<Table.HeaderCell>Weight (in grams)</Table.HeaderCell>
-						<Table.HeaderCell>Volume (in liters)</Table.HeaderCell>
-						<Table.HeaderCell>Pieces</Table.HeaderCell>
+						<Table.HeaderCell>Amount</Table.HeaderCell>
+						<Table.HeaderCell>Unit</Table.HeaderCell>
+						<Table.HeaderCell>Date bought</Table.HeaderCell>
+						<Table.HeaderCell>Date opened</Table.HeaderCell>
 						<Table.HeaderCell></Table.HeaderCell>
 						<Table.HeaderCell></Table.HeaderCell>
 					</Table.Row>
@@ -21,9 +21,10 @@ const FooditemList = ({ fooditems, remove }) => {
 					{fooditems.map(item => (
 						<Table.Row key={item.id}>
 							<Table.Cell>{item.name}</Table.Cell>
-							<Table.Cell>{item.weight}</Table.Cell>
-							<Table.Cell>{item.volume}</Table.Cell>
-							<Table.Cell>{item.pieces}</Table.Cell>
+							<Table.Cell>{item.amount}</Table.Cell>
+							<Table.Cell>{item.unit}</Table.Cell>
+							<Table.Cell>{item.bought}</Table.Cell>
+							<Table.Cell>{item.opened}</Table.Cell>
 							<Table.Cell>
 								<Button className='tiny' color='green'>
 									<Link to={`/fooditems/update/${item.id}`}>Update</Link>

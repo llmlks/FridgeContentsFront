@@ -82,18 +82,20 @@ class App extends Component {
 		const target = event.target
 		const newItem = {
 			name: target.name.value,
-			weight: target.weight.value,
-			volume: target.volume.value,
-			pieces: target.pieces.value
+			amount: target.amount.value,
+			unit: target.unit.value,
+			bought: target.bought.value,
+			opened: target.opened.value
 		}
 
 		try {
 			await this.props.createFooditem(newItem)
 
 			target.name.value = ''
-			target.weight.value = ''
-			target.volume.value = ''
-			target.pieces.value = ''
+			target.amount.value = ''
+			target.unit.value = ''
+			target.bought.value = ''
+			target.opened.value = ''
 
 			this.props.notify(`New food item ${newItem.name} created!`, 'success')
 		} catch (exception) {
@@ -120,17 +122,19 @@ class App extends Component {
 		const target = event.target
 		const newItem = {
 			...toUpdate,
-			weight: target.weight.value,
-			volume: target.volume.value,
-			pieces: target.pieces.value
+			amount: target.amount.value,
+			unit: target.unit.value,
+			bought: target.bought.value,
+			opened: target.opened.value
 		}
 
 		try {
 			await this.props.updateFooditem(newItem)
 
-			target.weight.value = ''
-			target.volume.value = ''
-			target.pieces.value = ''
+			target.amount.value = ''
+			target.unit.value = ''
+			target.bought.value = ''
+			target.opened.value = ''
 
 			this.props.notify(`Food item ${toUpdate.name} updated!`, 'success')
 		} catch (exception) {
