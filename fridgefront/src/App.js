@@ -79,7 +79,7 @@ class App extends Component {
 
 	createItem = async (event) => {
 		event.preventDefault()
-		const target = event.target
+		const target = event.target		
 		const newItem = {
 			name: target.name.value,
 			amount: target.amount.value,
@@ -99,7 +99,8 @@ class App extends Component {
 
 			this.props.notify(`New food item ${newItem.name} created!`, 'success')
 		} catch (exception) {
-			this.props.notify('Please provide a name and a value in at least one measurement field', 'error')
+			console.log(exception)
+			this.props.notify('Please provide a name, a measurement and a unit', 'error')
 		}
 	}
 
