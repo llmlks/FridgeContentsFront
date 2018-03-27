@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { initialiseFooditems, createFooditem, deleteFooditem, updateFooditem } from './reducers/fooditemReducer'
 import { setLoggedInUser, logIn, logOut } from './reducers/currentUserReducer'
 import { notify } from './reducers/notificationReducer'
+import { createFridge, deleteFridge, initialiseFridges } from './reducers/fridgeReducer'
 import LoginForm from './components/LoginForm'
 import { Container } from 'semantic-ui-react'
 import NavBar from './components/NavBar'
@@ -12,12 +13,15 @@ import FooditemList from './components/FooditemList'
 import CreateFooditem from './components/CreateFooditem'
 import SignUpForm from './components/SignUpForm'
 import userService from './services/users'
-import FooditemEditForm from './components/FooditemEditForm';
+import FooditemEditForm from './components/FooditemEditForm'
+import FridgeList from './components/FridgeList'
+import FridgeEditForm from './components/FridgeEditForm'
 
 class App extends Component {
 
 	async componentDidMount() {
 		await this.props.initialiseFooditems()
+		await this.props.initialiseFridges()
 		this.props.setLoggedInUser()
 	}
 
@@ -104,6 +108,25 @@ class App extends Component {
 		}
 	}
 
+	createFridge = async (event) => {
+		event.preventDefault()
+		const target = event.target
+		const newFridge = {
+			name: target.name.value
+		}
+
+		try {
+			await this.props.createFridge(newFridge)
+
+			target.name.value = ''
+
+			this.props.notify(`New fridge ${newFridge.name} created!`, 'success')
+		} catch (exception) {
+			console.log(exception)
+			this.props.notify('Please provide a name', 'error')
+		}
+	}
+
 	removeItem = (toDelete) => async () => {
 		if (!window.confirm(`Are you sure you want to delete ${toDelete.name}`)) {
 			return
@@ -116,6 +139,21 @@ class App extends Component {
 		} catch (exception) {
 			this.props.notify(`Deletion of ${toDelete.name} not allowed`, 'error')
 		}
+	}
+
+	removeFridge = (toDelete) => async () => {
+		if (!window.confirm(`Are you sure you want to delete ${toDelete.name}`)) {
+			return
+		}
+
+		try {
+			await this.props.deleteFridge(toDelete.id)
+
+			this.props.notify(`${toDelete.name} deleted!`, 'success')
+		} catch (exception) {
+			console.log(exception)
+			this.props.notify(`Deletion of ${toDelete.name} not allowed`, 'error')
+		}		
 	}
 
 	updateFooditem = (toUpdate) => async (event) => {
@@ -148,6 +186,10 @@ class App extends Component {
 		return this.props.fooditems.find(f => f.id === id)
 	}
 
+	getFridgeByID = (id) => {
+		return this.props.fridges.find(f => f.id === id)
+	}
+
 	render() {
 		return (
 			<Container>
@@ -161,6 +203,17 @@ class App extends Component {
 								? <Redirect to='/fooditems' />
 								: <LoginForm onSubmit={this.login}/>
 						} />
+						<Route exact path='/fridges' render={() => 
+							this.props.user
+								? <FridgeList user={this.props.user} remove={this.removeFridge} addFridge={this.createFridge} fridges={this.props.fridges} />
+								: <Redirect to='/login' />
+						} />
+						<Route path='/fridges/update/:id' render={({ match }) => {
+							const fridge = this.getFridgeByID(match.params.id)
+							return this.props.user
+								? <FridgeEditForm fridge={fridge}/>
+								: <Redirect to='/login' />
+						}} />
 						<Route exact path='/fooditems' render={() =>
 							this.props.user
 								? <FooditemList fooditems={this.props.fooditems} remove={this.removeItem}/>
@@ -188,11 +241,24 @@ class App extends Component {
 const mapStateToProps = (state) => {
 	return {
 		user: state.user,
-		fooditems: state.fooditems
+		fooditems: state.fooditems,
+		fridges: state.fridges
 	}
 }
 
 export default connect(
 	mapStateToProps,
-	{ initialiseFooditems, setLoggedInUser, logIn, notify, logOut, createFooditem, deleteFooditem, updateFooditem }
+	{
+		initialiseFooditems,
+		setLoggedInUser,
+		logIn,
+		notify,
+		logOut,
+		createFooditem,
+		deleteFooditem,
+		updateFooditem,
+		createFridge,
+		deleteFridge,
+		initialiseFridges
+	}
 )(App)

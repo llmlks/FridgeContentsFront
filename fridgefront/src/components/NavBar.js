@@ -6,6 +6,7 @@ const NavBar = ({ user, logout }) => {
 	if (user) {
 		return (
 			<Menu inverted>
+				<Menu.Item link><Link to='/fridges'>Fridges</Link></Menu.Item>
 				<Menu.Item link><Link to='/fooditems'>Food items</Link></Menu.Item>
 				<Menu.Item link><Link to='/fooditems/create'>Add new food item</Link></Menu.Item>
 				<div className='right menu'>

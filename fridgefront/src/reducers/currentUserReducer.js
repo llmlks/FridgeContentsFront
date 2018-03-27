@@ -1,5 +1,6 @@
 import loginService from '../services/login'
 import fooditemService from '../services/fooditems'
+import fridgeService from '../services/fridges'
 
 const reducer = (state = null, action) => {
 	switch (action.type) {
@@ -17,6 +18,7 @@ export const logIn = (credentials) => {
 		const response = await loginService.login(credentials)
 		window.localStorage.setItem('loggedInUser', JSON.stringify(response))
 		fooditemService.setToken(response.token)
+		fridgeService.setToken(response.token)
 		dispatch({
 			type: 'LOG_IN',
 			data: response
@@ -27,6 +29,7 @@ export const logIn = (credentials) => {
 export const logOut = () => {
 	window.localStorage.removeItem('loggedInUser')
 	fooditemService.setToken('')
+	fridgeService.setToken('')
 	return {
 		type: 'LOG_OUT'
 	}
@@ -37,6 +40,7 @@ export const setLoggedInUser = () => {
 	if (loggedIn) {
 		loggedIn = JSON.parse(loggedIn)
 		fooditemService.setToken(loggedIn.token)
+		fridgeService.setToken(loggedIn.token)
 	}
 	return {
 		type: 'LOG_IN',

@@ -3,16 +3,21 @@ import thunk from 'redux-thunk'
 import fooditemReducer from './reducers/fooditemReducer'
 import currentUserReducer from './reducers/currentUserReducer'
 import notificationReducer from './reducers/notificationReducer'
+import fridgeReducer from './reducers/fridgeReducer'
+import { composeWithDevTools } from 'redux-devtools-extension'
 
 const reducer = combineReducers({
 	user: currentUserReducer,
 	fooditems: fooditemReducer,
-	notification: notificationReducer
+	notification: notificationReducer,
+	fridges: fridgeReducer
 })
 
 const store = createStore(
 	reducer,
-	applyMiddleware(thunk)
+	composeWithDevTools(
+		applyMiddleware(thunk)
+	)
 )
 
 export default store
