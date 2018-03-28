@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { initialiseFooditems, createFooditem, deleteFooditem, updateFooditem } from './reducers/fooditemReducer'
-import { setLoggedInUser, logIn, logOut } from './reducers/currentUserReducer'
+import { setLoggedInUser, logIn, logOut, changeDefaultFridge } from './reducers/currentUserReducer'
 import { notify } from './reducers/notificationReducer'
 import { createFridge, deleteFridge, initialiseFridges } from './reducers/fridgeReducer'
 import LoginForm from './components/LoginForm'
@@ -20,9 +20,9 @@ import FridgeEditForm from './components/FridgeEditForm'
 class App extends Component {
 
 	async componentDidMount() {
-		await this.props.initialiseFooditems()
-		await this.props.initialiseFridges()
-		this.props.setLoggedInUser()
+		await this.props.setLoggedInUser()
+		await this.props.initialiseFridges(this.props.user.id)
+		await this.props.initialiseFooditems(this.props.user.id)
 	}
 
 	login = async (event) => {
@@ -89,7 +89,8 @@ class App extends Component {
 			amount: target.amount.value,
 			unit: target.unit.value,
 			bought: target.bought.value,
-			opened: target.opened.value
+			opened: target.opened.value,
+			fridge: this.props.user.defaultFridge
 		}
 
 		try {
@@ -182,6 +183,21 @@ class App extends Component {
 		
 	}
 
+	changeDefaultFridge = (fridge) => async () => {
+		const updatedUser = {
+			...this.props.user,
+			defaultFridge: fridge.id
+		}
+
+		try {
+			await this.props.changeDefaultFridge(updatedUser)
+
+			this.props.notify(`${fridge.name} is now your default fridge!`, 'success')
+		} catch (exception) {
+			console.log(exception)
+		}
+	}
+
 	getFooditemByID = (id) => {
 		return this.props.fooditems.find(f => f.id === id)
 	}
@@ -205,7 +221,12 @@ class App extends Component {
 						} />
 						<Route exact path='/fridges' render={() => 
 							this.props.user
-								? <FridgeList user={this.props.user} remove={this.removeFridge} addFridge={this.createFridge} fridges={this.props.fridges} />
+								? 	<FridgeList
+										remove={this.removeFridge}
+										addFridge={this.createFridge}
+										fridges={this.props.fridges}
+										makeDefault={this.changeDefaultFridge}
+									/>
 								: <Redirect to='/login' />
 						} />
 						<Route path='/fridges/update/:id' render={({ match }) => {
@@ -216,7 +237,7 @@ class App extends Component {
 						}} />
 						<Route exact path='/fooditems' render={() =>
 							this.props.user
-								? <FooditemList fooditems={this.props.fooditems} remove={this.removeItem}/>
+								? <FooditemList remove={this.removeItem}/>
 								: <Redirect to='/login' />
 						} />
 						<Route path='/fooditems/create' render={() =>
@@ -224,7 +245,11 @@ class App extends Component {
 								? <CreateFooditem onSubmit={this.createItem} />
 								: <Redirect to='/login' />
 						} />
-						<Route path='/signup' render={() => <SignUpForm onSubmit={this.signup} />} />
+						<Route path='/signup' render={() =>
+							this.props.user
+								? <Redirect to='/fooditems' />
+								: <SignUpForm onSubmit={this.signup}/>
+						} />
 						<Route path='/fooditems/update/:id' render={({ match, history }) => {
 							const fooditem = this.getFooditemByID(match.params.id)
 							return this.props.user
@@ -240,7 +265,7 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		user: state.user,
+		user: state.loggedin ? state.loggedin.user : null,
 		fooditems: state.fooditems,
 		fridges: state.fridges
 	}
@@ -259,6 +284,7 @@ export default connect(
 		updateFooditem,
 		createFridge,
 		deleteFridge,
-		initialiseFridges
+		initialiseFridges,
+		changeDefaultFridge
 	}
 )(App)

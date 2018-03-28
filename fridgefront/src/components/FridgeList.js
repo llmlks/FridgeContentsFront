@@ -1,9 +1,10 @@
 import React from 'react'
-import { Segment, Table, Button } from 'semantic-ui-react'
+import { Segment, Table, Button, Icon } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import CreateFridgeForm from './CreateFridgeForm'
+import { connect } from 'react-redux'
 
-const FridgeList = ({ remove, user, addFridge, fridges }) => {
+const FridgeList = ({ remove, user, addFridge, fridges, makeDefault }) => {
 	return (
 		<Segment>
 			<CreateFridgeForm onSubmit={addFridge}/>
@@ -21,16 +22,24 @@ const FridgeList = ({ remove, user, addFridge, fridges }) => {
 				<Table.Body>
 					{fridges.map(fridge => (
 						<Table.Row key={fridge.id}>
-							<Table.Cell>{fridge.name}</Table.Cell>
-							<Table.Cell>{fridge.fooditems.length}</Table.Cell>
-							<Table.Cell>{fridge.users.filter(u => u.id !== user.id).map(u => <p>{u.name}</p>)}</Table.Cell>
-							<Table.Cell>{user.default === fridge.id ? 'true' : 'false'}</Table.Cell>
-							<Table.Cell>
-								<Button className='tiny' color='green'>
-									<Link to={`/fridges/update/${fridge.id}`}>Update</Link>
-								</Button>
+							<Table.Cell rowSpan={fridge.users.length}>
+								<Link to={`/fridges/update/${fridge.id}`}>{fridge.name}</Link>
 							</Table.Cell>
-							<Table.Cell><Button color='red' onClick={remove(fridge)}>Delete</Button></Table.Cell>
+							<Table.Cell rowSpan={fridge.users.length}>{fridge.fooditems.length}</Table.Cell>
+							<Table.Cell>{fridge.users[0].name}</Table.Cell>
+							<Table.Cell rowSpan={fridge.users.length}>
+								{user.defaultFridge === fridge.id && <Icon color='green' name='checkmark' size='large' />}
+							</Table.Cell>
+							<Table.Cell rowSpan={fridge.users.length}>
+								{user.defaultFridge !== fridge.id && 
+									<Button className='tiny' color='green' onClick={makeDefault(fridge)}>
+										Make default
+									</Button>
+								}
+							</Table.Cell>
+							<Table.Cell rowSpan={fridge.users.length}>
+								<Button color='red' onClick={remove(fridge)}>Delete</Button>
+							</Table.Cell>
 						</Table.Row>
 					))}
 				</Table.Body>
@@ -39,4 +48,11 @@ const FridgeList = ({ remove, user, addFridge, fridges }) => {
 	)
 }
 
-export default FridgeList
+const mapStateToProps = (state, ownProps) => {
+	return {
+		...ownProps,
+		user: state.loggedin.user
+	}
+}
+
+export default connect(mapStateToProps)(FridgeList)

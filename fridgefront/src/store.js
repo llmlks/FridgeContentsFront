@@ -7,7 +7,7 @@ import fridgeReducer from './reducers/fridgeReducer'
 import { composeWithDevTools } from 'redux-devtools-extension'
 
 const reducer = combineReducers({
-	user: currentUserReducer,
+	loggedin: currentUserReducer,
 	fooditems: fooditemReducer,
 	notification: notificationReducer,
 	fridges: fridgeReducer

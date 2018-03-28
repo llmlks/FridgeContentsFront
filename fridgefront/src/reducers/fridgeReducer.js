@@ -13,9 +13,9 @@ const reducer = (state = [], action) => {
 	}
 }
 
-export const initialiseFridges = () => {
+export const initialiseFridges = (userID) => {
 	return async (dispatch) => {
-		const response = await fridgeService.getAll()
+		const response = await fridgeService.getAllForUser(userID)
 		dispatch({
 			type: 'INITIALISE_FRIDGES',
 			data: response

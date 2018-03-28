@@ -12,6 +12,11 @@ const getAll = async () => {
 	return response.data
 }
 
+const getAllForUser = async (userID) => {
+	const response = await axios.get(`${baseUrl}/user/${userID}`)
+	return response.data
+}
+
 const create = async (newFridge) => {
 	const config = {
 		headers: {
@@ -34,4 +39,4 @@ const remove = async (toDelete) => {
 	return response.data
 }
 
-export default { getAll, setToken, create, remove }
+export default { getAll, getAllForUser, setToken, create, remove }
